@@ -18,7 +18,7 @@ jobs:
       - run: >-
           aws ec2 terminate-instances --instance-ids $(aws ec2 describe-instances --query Reservations[].Instances[].InstanceId --filters Name=tag:circleci,Values=create-flask-ec2 --output text)
 
-          aws ec2 run-instances --image-id ami-0557a15b87f6559cf --count 1 --instance-type t2.micro --security-group-ids sg-0d137402e346309e6 --user-data file://configs/user_data.sh --tag-specifications 'ResourceType=instance,Tags=[{Key=circleci:Value=create-flask-ec2}]'                      
+          aws ec2 run-instances --image-id ami-0557a15b87f6559cf --count 1 --instance-type t2.micro --security-group-ids sg-0d137402e346309e6 --user-data file://configs/user_data.sh --tag-specifications 'ResourceType=instance,Tags=[{Key=circleci,Value=create-flask-ec2}]'                      
 workflows:
   aws-cli:
     jobs:
