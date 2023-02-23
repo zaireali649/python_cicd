@@ -1,14 +1,7 @@
-from dash import Dash, dcc               # pip install dash
-import dash_bootstrap_components as dbc  # pip install dash-bootstrap-components
-import flask
-from flask import flask
-# Build your components
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-mytext = dcc.Markdown(children="# Hello World - let's build web apps in Python!")
+from flask import Flask
 
-# Customize your own Layout
-app.layout = dbc.Container([mytext])
+app = Flask(__name__)
 
-# Run app
-if __name__=='__main__':
-    app.run_server()
+@app.route("/")
+def hello_world():
+    return "<p>Hello, World!</p>"
