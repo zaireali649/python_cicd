@@ -1,28 +1,23 @@
 version: 2.1
-
 orbs:
-  python: circleci/python@1.5.0
+  aws-cli: circleci/aws-cli@3.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+on:
+  pull_request:
+    types: [closed]
+    
 jobs:
-  build-and-test: # This is the name of the job, feel free to change it to better match what you're trying to do!
-    docker:
-      - image: cimg/python:3.10.2
+  create-flask-ec2:
+    executor: aws-cli/default
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
-          # app-dir: ~/project/package-directory/  # If you're requirements.txt isn't in the root directory.
-          # pip-dependency-file: test-requirements.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
-      - run:
-          name: Run EC2 Script
-          command: user_data.sh
-
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+      - aws-cli/setup:          
+          aws-access-key-id: AWS_ACCESS_KEY
+          aws-secret-access-key: AWS_SECRET_KEY
+          aws-region: AWS_REGION_NAME
+      - run: >-
+          aws ec2 run-instances --image-id ami-0557a15b87f6559cf --count 1 --instance-type t2.micro --security-group-ids sg-0d137402e346309e6 --user-data file://configs/user_data.sh
 workflows:
-  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  aws-cli:
     jobs:
-      - build-and-test
+      - create-flask-ec2
